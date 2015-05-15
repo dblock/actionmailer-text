@@ -17,6 +17,43 @@ describe ActionMailer::Text::HtmlToPlainText do
     ')).to match(/Test/)
   end
 
+  it 'ignores titles' do
+    expect(subject.convert_to_text('
+    <html>
+    <title>Ignore me</title>
+    <body>
+    <p>Test</p>
+    </body>
+    </html>
+    ')).not_to match(/Ignore me/)
+  end
+
+  it 'ignores header links' do
+    expect(subject.convert_to_text('
+    <html>
+    <head>
+    <link href="http://example.com/should/be/ignored.css" rel="stylesheet" />
+    </head>
+    <body>
+    <p>Test</p>
+    </body>
+    </html>
+    ')).not_to match(/\*/)
+  end
+
+  it 'ignores header titles' do
+    expect(subject.convert_to_text('
+    <html>
+    <head>
+    <title>Ignore me</title>
+    </head>
+    <body>
+    <p>Test</p>
+    </body>
+    </html>
+    ')).not_to match(/Ignore me/)
+  end
+
   it 'converts a malformed body' do
     expect(subject.convert_to_text('
     <html>

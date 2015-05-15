@@ -24,6 +24,9 @@ module ActionMailer
         he = HTMLEntities.new
         txt = he.decode(txt)
 
+        # Ignore things that come outside the body
+        txt.gsub!(/.*?(<body.+?\/body>).*?/im, '\1')
+
         # replace image by their alt attribute
         txt.gsub!(/<img.+?alt=\"([^\"]*)\"[^>]*\/>/i, '\1')
         txt.gsub!(/<img.+?alt='([^\']*)\'[^>]*\/>/i, '\1')
