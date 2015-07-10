@@ -32,12 +32,14 @@ module ActionMailer
         txt.gsub!(/<img.+?alt='([^\']*)\'[^>]*\/>/i, '\1')
 
         # links
-        txt.gsub!(/<a.+?href=\"([^\"]*)\"[^>]*>(.+?)<\/a>/mi) do |_s|
-          Regexp.last_match[2].strip + ' ( ' + Regexp.last_match[1].strip + ' )'
+        txt.gsub!(/<a.+?href=\"([^\"]*)\"[^>]*>(.*?)<\/a>/mi) do |_s|
+          matches = Regexp.last_match.to_a.map(&:strip)
+          matches[2] + ' ( ' + matches[1] + ' )' unless matches[2].empty?
         end
 
-        txt.gsub!(/<a.+?href='([^\']*)\'[^>]*>(.+?)<\/a>/mi) do |_s|
-          Regexp.last_match[2].strip + ' ( ' + Regexp.last_match[1].strip + ' )'
+        txt.gsub!(/<a.+?href='([^\']*)\'[^>]*>(.*?)<\/a>/mi) do |_s|
+          matches = Regexp.last_match.to_a.map(&:strip)
+          matches[2] + ' ( ' + matches[1] + ' )' unless matches[2].empty?
         end
 
         # handle headings (H1-H6)

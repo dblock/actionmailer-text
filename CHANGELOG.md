@@ -1,6 +1,6 @@
 ### 0.1.2 (Next)
 
-* Your contribution here.
+* [#4](https://github.com/dblock/actionmailer-text/pull/4) Ignore empty links - [@apalancat](https://github.com/apalancat).
 
 ### 0.1.1 (2015-04-25)
 
