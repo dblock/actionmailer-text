@@ -167,6 +167,12 @@ describe ActionMailer::Text::HtmlToPlainText do
     expect(subject.convert_to_text('<a href="[[!unsubscribe]]">Link</a>')).to eq('Link ( [[!unsubscribe]] )')
   end
 
+  it 'ignores empty links' do
+    expect(subject
+      .convert_to_text('<a href="http://example.com/a/">Link A</a> <a href="http://example.com/b/"></a> <a href="http://example.com/c/">Link C</a>', nil))
+      .to eq('Link A ( http://example.com/a/ ) Link C ( http://example.com/c/ )')
+  end
+
   # see https://github.com/alexdunae/premailer/issues/72
   it 'converts multiple links per line' do
     expect(subject
