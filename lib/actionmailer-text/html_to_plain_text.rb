@@ -18,7 +18,7 @@ module ActionMailer
       #
       # TODO: add support for DL, OL
       def self.convert_to_text(html, line_length = 65, _from_charset = 'UTF-8')
-        txt = html
+        txt = html.to_str
 
         # decode HTML entities
         he = HTMLEntities.new

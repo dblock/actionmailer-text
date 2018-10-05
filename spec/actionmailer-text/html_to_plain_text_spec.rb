@@ -69,6 +69,12 @@ describe ActionMailer::Text::HtmlToPlainText do
     ')).to eq('cédille garçon & à ñ')
   end
 
+  it 'dencodes html entities from a SafeBuffer' do
+    expect(subject.convert_to_text(ActiveSupport::SafeBuffer.new('
+      c&eacute;dille gar&#231;on &amp; &agrave; &ntilde;
+    '))).to eq('cédille garçon & à ñ')
+  end
+
   it 'strips whitespace' do
     expect(subject.convert_to_text("  \ttext\ntext\n")).to eq("text\ntext")
     expect(subject.convert_to_text("  \na \n a \t")).to eq("a\na")
