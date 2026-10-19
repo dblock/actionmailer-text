@@ -1,5 +1,6 @@
-### 0.1.2 (Next)
+### 0.2.0 (Next)
 
+* [#16](https://github.com/dblock/actionmailer-text/pull/16): Prepare version 0.2.0 and add agent contribution guidance - [@dblock](https://github.com/dblock).
 * [#11](https://github.com/dblock/actionmailer-text/pull/11): Replace Travis CI with GitHub Actions coverage for Rails 6.1 through 8.1, modernize development dependencies, and expand mailer regression tests - [@dblock](https://github.com/dblock).
 * [#4](https://github.com/dblock/actionmailer-text/pull/4): Ignore empty links - [@apalancat](https://github.com/apalancat).
 * [#8](https://github.com/dblock/actionmailer-text/pull/8): Decode HTML entities in newer Rails versions - [@mthurman](https://github.com/mthurman).
