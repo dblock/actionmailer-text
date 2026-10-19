@@ -1,5 +1,6 @@
 ### 0.2.0 (Next)
 
+* [#17](https://github.com/dblock/actionmailer-text/pull/17): Add a maintainer release guide - [@dblock](https://github.com/dblock).
 * [#12](https://github.com/dblock/actionmailer-text/pull/12): Avoid backtracking when wrapping long tokens and preserve unbroken URLs, ported from [Kit/actionmailer-text](https://github.com/Kit/actionmailer-text) - [@scanferla](https://github.com/scanferla).
 * [#14](https://github.com/dblock/actionmailer-text/pull/14): Support `generate_text only:` and `except:` to select mailer actions for automatic plaintext generation - [@dblock](https://github.com/dblock).
 * [#13](https://github.com/dblock/actionmailer-text/pull/13): Parse HTML with Nokogiri while preserving the converter API and core text formatting, inspired by [NomNomCameron/actionmailer-textgiri](https://github.com/NomNomCameron/actionmailer-textgiri) - [@NomNomCameron](https://github.com/NomNomCameron).
