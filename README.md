@@ -8,6 +8,8 @@ Automatically insert a text/plain part into your HTML multipart e-mails.
 
 ## Installation
 
+Requires Ruby 3.1 or newer. Use a Ruby version supported by your selected Rails release.
+
 ```ruby
 gem 'actionmailer-text'
 ```

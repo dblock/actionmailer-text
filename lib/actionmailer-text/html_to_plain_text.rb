@@ -9,6 +9,7 @@ require 'htmlentities'
 
 module ActionMailer
   module Text
+    # Converts HTML into plaintext with link destinations and basic structural formatting.
     module HtmlToPlainText
       def convert_to_text(html, line_length = 65, from_charset = 'UTF-8')
         HtmlToPlainText.convert_to_text(html, line_length, from_charset)
@@ -34,12 +35,12 @@ module ActionMailer
         # links
         txt.gsub!(%r{<a.+?href="([^"]*)"[^>]*>(.*?)</a>}mi) do |_s|
           matches = Regexp.last_match.to_a.map(&:strip)
-          matches[2] + ' ( ' + matches[1] + ' )' unless matches[2].empty?
+          "#{matches[2]} ( #{matches[1]} )" unless matches[2].empty?
         end
 
         txt.gsub!(%r{<a.+?href='([^']*)'[^>]*>(.*?)</a>}mi) do |_s|
           matches = Regexp.last_match.to_a.map(&:strip)
-          matches[2] + ' ( ' + matches[1] + ' )' unless matches[2].empty?
+          "#{matches[2]} ( #{matches[1]} )" unless matches[2].empty?
         end
 
         # handle headings (H1-H6)
@@ -61,14 +62,14 @@ module ActionMailer
 
           htext = case hlevel
                   when 1   # H1, asterisks above and below
-                    ('*' * hlength) + "\n" + htext + "\n" + ('*' * hlength)
+                    "#{'*' * hlength}\n#{htext}\n#{'*' * hlength}"
                   when 2   # H1, dashes above and below
-                    ('-' * hlength) + "\n" + htext + "\n" + ('-' * hlength)
+                    "#{'-' * hlength}\n#{htext}\n#{'-' * hlength}"
                   else # H3-H6, dashes below
-                    htext + "\n" + ('-' * hlength)
+                    "#{htext}\n#{'-' * hlength}"
                   end
 
-          "\n\n" + htext + "\n\n"
+          "\n\n#{htext}\n\n"
         end
 
         # wrap spans
