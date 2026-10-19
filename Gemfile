@@ -1,8 +1,11 @@
-source 'http://rubygems.org'
+# frozen_string_literal: true
+
+source 'https://rubygems.org'
 
 gemspec
 
-gem 'rake', '~> 10.4'
-gem 'rubocop', '0.30.0'
-gem 'rspec', '~> 3.2'
+gem 'actionmailer', ENV.fetch('RAILS_VERSION', '~> 8.1.0')
 gem 'email-example-spec', '~> 0.1.0'
+gem 'rake', '~> 13.0'
+gem 'rspec', '~> 3.13'
+gem 'rubocop', '~> 1.0', require: false

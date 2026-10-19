@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'action_mailer'
 require 'actionmailer-text/version'
 require 'actionmailer-text/html_to_plain_text'
