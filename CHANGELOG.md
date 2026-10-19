@@ -1,3 +1,7 @@
+### 0.2.1 (Next)
+
+* Your contribution here.
+
 ### 0.2.0 (2026-10-19)
 
 * [#17](https://github.com/dblock/actionmailer-text/pull/17): Add a maintainer release guide - [@dblock](https://github.com/dblock).
