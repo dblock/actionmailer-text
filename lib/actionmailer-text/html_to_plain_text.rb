@@ -1,4 +1,4 @@
-# coding: utf-8
+# frozen_string_literal: true
 
 # Extracted from the premailer gem.
 #
@@ -25,31 +25,31 @@ module ActionMailer
         txt = he.decode(txt)
 
         # Ignore things that come outside the body
-        txt.gsub!(/.*?(<body.+?\/body>).*?/im, '\1')
+        txt.gsub!(%r{.*?(<body.+?/body>).*?}im, '\1')
 
         # replace image by their alt attribute
-        txt.gsub!(/<img.+?alt=\"([^\"]*)\"[^>]*\/>/i, '\1')
-        txt.gsub!(/<img.+?alt='([^\']*)\'[^>]*\/>/i, '\1')
+        txt.gsub!(%r{<img.+?alt="([^"]*)"[^>]*/>}i, '\1')
+        txt.gsub!(%r{<img.+?alt='([^']*)'[^>]*/>}i, '\1')
 
         # links
-        txt.gsub!(/<a.+?href=\"([^\"]*)\"[^>]*>(.*?)<\/a>/mi) do |_s|
+        txt.gsub!(%r{<a.+?href="([^"]*)"[^>]*>(.*?)</a>}mi) do |_s|
           matches = Regexp.last_match.to_a.map(&:strip)
           matches[2] + ' ( ' + matches[1] + ' )' unless matches[2].empty?
         end
 
-        txt.gsub!(/<a.+?href='([^\']*)\'[^>]*>(.*?)<\/a>/mi) do |_s|
+        txt.gsub!(%r{<a.+?href='([^']*)'[^>]*>(.*?)</a>}mi) do |_s|
           matches = Regexp.last_match.to_a.map(&:strip)
           matches[2] + ' ( ' + matches[1] + ' )' unless matches[2].empty?
         end
 
         # handle headings (H1-H6)
-        txt.gsub!(/(<\/h[1-6]>)/i, "\n\\1") # move closing tags to new lines
-        txt.gsub!(/[\s]*<h([1-6]+)[^>]*>[\s]*(.*)[\s]*<\/h[1-6]+>/i) do |_s|
+        txt.gsub!(%r{(</h[1-6]>)}i, "\n\\1") # move closing tags to new lines
+        txt.gsub!(%r{\s*<h([1-6]+)[^>]*>\s*(.*)\s*</h[1-6]+>}i) do |_s|
           hlevel = Regexp.last_match[1].to_i
 
           htext = Regexp.last_match[2]
-          htext.gsub!(/<br[\s]*\/?>/i, "\n") # handle <br>s
-          htext.gsub!(/<\/?[^>]*>/i, '') # strip tags
+          htext.gsub!(%r{<br\s*/?>}i, "\n") # handle <br>s
+          htext.gsub!(%r{</?[^>]*>}i, '') # strip tags
 
           # determine maximum line length
           hlength = 0
@@ -59,32 +59,32 @@ module ActionMailer
           end
           hlength = line_length if line_length && hlength > line_length
 
-          case hlevel
-          when 1   # H1, asterisks above and below
-            htext = ('*' * hlength) + "\n" + htext + "\n" + ('*' * hlength)
-          when 2   # H1, dashes above and below
-            htext = ('-' * hlength) + "\n" + htext + "\n" + ('-' * hlength)
-          else     # H3-H6, dashes below
-            htext = htext + "\n" + ('-' * hlength)
-          end
+          htext = case hlevel
+                  when 1   # H1, asterisks above and below
+                    ('*' * hlength) + "\n" + htext + "\n" + ('*' * hlength)
+                  when 2   # H1, dashes above and below
+                    ('-' * hlength) + "\n" + htext + "\n" + ('-' * hlength)
+                  else # H3-H6, dashes below
+                    htext + "\n" + ('-' * hlength)
+                  end
 
           "\n\n" + htext + "\n\n"
         end
 
         # wrap spans
-        txt.gsub!(/(<\/span>)[\s]+(<span)/mi, '\1 \2')
+        txt.gsub!(%r{(</span>)\s+(<span)}mi, '\1 \2')
 
         # lists -- TODO: should handle ordered lists
-        txt.gsub!(/[\s]*(<li[^>]*>)[\s]*/i, '* ')
+        txt.gsub!(/\s*(<li[^>]*>)\s*/i, '* ')
         # list not followed by a newline
-        txt.gsub!(/<\/li>[\s]*(?![\n])/i, "\n")
+        txt.gsub!(%r{</li>\s*(?!\n)}i, "\n")
 
         # paragraphs and line breaks
-        txt.gsub!(/<\/p>/i, "\n\n")
-        txt.gsub!(/<br[\/ ]*>/i, "\n")
+        txt.gsub!(%r{</p>}i, "\n\n")
+        txt.gsub!(%r{<br[/ ]*>}i, "\n")
 
         # strip remaining tags
-        txt.gsub!(/<\/?[^>]*>/, '')
+        txt.gsub!(%r{</?[^>]*>}, '')
 
         txt = custom_word_wrap(txt, line_length) if line_length
 
@@ -97,7 +97,7 @@ module ActionMailer
         txt.gsub!(/[ \t]+\n/, "\n") # space at end of lines
 
         # no more than two consecutive newlines
-        txt.gsub!(/[\n]{3,}/, "\n\n")
+        txt.gsub!(/\n{3,}/, "\n\n")
 
         # no more than two consecutive spaces
         txt.gsub!(/ {2,}/, ' ')

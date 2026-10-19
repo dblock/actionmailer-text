@@ -35,6 +35,15 @@ bundle install
 bundle exec rake
 ```
 
+The default Gemfile tests Rails 8.1. Select another supported Rails series with `RAILS_VERSION`, for example:
+
+```sh
+RAILS_VERSION='~> 7.2.0' bundle update
+RAILS_VERSION='~> 7.2.0' bundle exec rspec
+```
+
+GitHub Actions runs the suite against Rails 6.1, 7.0, 7.1, 7.2, 8.0, and 8.1 with compatible Ruby versions, including Ruby 4.0 for Rails 8.1. Use a Ruby version supported by the selected Rails release. Lint runs separately with current RuboCop; `bundle exec rake` runs both lint and specs locally.
+
 ## Write Tests
 
 Try to write a test that reproduces the problem you're trying to fix or describes a feature that you want to build.
@@ -114,7 +123,7 @@ git push origin my-feature-branch -f
 
 ## Check on Your Pull Request
 
-Go back to your pull request after a few minutes and see whether it passed muster with Travis-CI. Everything should look green, otherwise fix issues and amend your commit as described above.
+Check the GitHub Actions results on your pull request and address any failures.
 
 ## Be Patient
 

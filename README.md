@@ -1,7 +1,7 @@
 ActionMailer::Text
 ==================
 
-[![Build Status](https://travis-ci.org/dblock/actionmailer-text.svg?branch=master)](https://travis-ci.org/dblock/actionmailer-text)
+[![CI](https://github.com/dblock/actionmailer-text/actions/workflows/ci.yml/badge.svg)](https://github.com/dblock/actionmailer-text/actions/workflows/ci.yml)
 [![Gem Version](https://badge.fury.io/rb/actionmailer-text.svg)](http://badge.fury.io/rb/actionmailer-text)
 
 Automatically insert a text/plain part into your HTML multipart e-mails.

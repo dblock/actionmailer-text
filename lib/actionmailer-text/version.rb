@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module ActionMailer
   module Text
     VERSION = '0.1.2'
