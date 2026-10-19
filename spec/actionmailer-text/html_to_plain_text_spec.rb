@@ -178,6 +178,25 @@ describe ActionMailer::Text::HtmlToPlainText do
     expect(lens.max).to be <= 20
   end
 
+  it 'preserves long unbroken tokens when wrapping' do
+    token = 'a' * 100_000
+    text = subject.convert_to_text("<p>#{token}</p>")
+
+    expect(text).to eq(token)
+  end
+
+  it 'keeps long URLs intact between wrapped words' do
+    url = "https://example.com/#{'a' * 300}"
+
+    expect(subject.convert_to_text("<p>before #{url} after</p>", 20)).to eq("before\n#{url}\nafter")
+  end
+
+  it 'preserves blank lines and the wrapping whitespace contract' do
+    expect(subject.custom_word_wrap(" short \n\n  one two three  ", 8)).to eq(" short \n\none\ntwo\nthree")
+    expect(subject.custom_word_wrap("one\t two   three", 8)).to eq("one\t two\nthree")
+    expect(subject.custom_word_wrap('cédille garçon', 8)).to eq("cédille\ngarçon")
+  end
+
   it 'converts links' do
     # basic
     expect(subject.convert_to_text('<a href="http://example.com/">Link</a>')).to eq('Link ( http://example.com/ )')
