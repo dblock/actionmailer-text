@@ -1,5 +1,6 @@
 ### 0.2.0 (Next)
 
+* [#14](https://github.com/dblock/actionmailer-text/pull/14): Support `generate_text only:` and `except:` to select mailer actions for automatic plaintext generation - [@dblock](https://github.com/dblock).
 * [#13](https://github.com/dblock/actionmailer-text/pull/13): Parse HTML with Nokogiri while preserving the converter API and core text formatting, inspired by [NomNomCameron/actionmailer-textgiri](https://github.com/NomNomCameron/actionmailer-textgiri) - [@NomNomCameron](https://github.com/NomNomCameron).
 * [#15](https://github.com/dblock/actionmailer-text/pull/15): Require Ruby 3.1 or newer and RuboCop 1.92, disable Metrics and line-length cops, and regenerate the lint baseline after checking safe autocorrections - [@dblock](https://github.com/dblock).
 * [#16](https://github.com/dblock/actionmailer-text/pull/16): Prepare version 0.2.0 and add agent contribution guidance - [@dblock](https://github.com/dblock).
