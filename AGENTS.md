@@ -2,6 +2,8 @@
 
 ActionMailer::Text is a Ruby gem that generates a plaintext alternative for HTML Action Mailer messages. Read [CONTRIBUTING.md](CONTRIBUTING.md) for development setup, commands, and contribution workflow.
 
+Follow [RELEASING.md](RELEASING.md) for releases. Publishing gems and pushing release tags require an explicit release request; preparing documentation or bumping a development version is not authorization to publish.
+
 ## Code Layout
 
 - `lib/actionmailer-text.rb` is the main entry point; `lib/actionmailer_text.rb` is its underscore alias.

@@ -44,6 +44,10 @@ RAILS_VERSION='~> 7.2.0' bundle exec rspec
 
 GitHub Actions runs the suite against Rails 6.1, 7.0, 7.1, 7.2, 8.0, and 8.1 with compatible Ruby versions, including Ruby 4.0 for Rails 8.1. Use a Ruby version supported by the selected Rails release. Lint runs separately with current RuboCop; `bundle exec rake` runs both lint and specs locally.
 
+## Releasing
+
+Maintainers should follow [RELEASING.md](RELEASING.md) to prepare, publish, and verify a release, then start the next development version.
+
 ## Write Tests
 
 Try to write a test that reproduces the problem you're trying to fix or describes a feature that you want to build.
