@@ -1,5 +1,6 @@
 ### 0.2.1 (Next)
 
+* [#20](https://github.com/dblock/actionmailer-text/pull/20): Add SimpleCov line and branch coverage with HTML, LCOV, and Coveralls reporting - [@dblock](https://github.com/dblock).
 * [#21](https://github.com/dblock/actionmailer-text/pull/21): Add Danger pull-request checks with danger-changelog - [@dblock](https://github.com/dblock).
 * Your contribution here.
 
