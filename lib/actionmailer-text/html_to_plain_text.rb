@@ -1,11 +1,6 @@
 # frozen_string_literal: true
 
-# Extracted from the premailer gem.
-#
-# https://raw.github.com/alexdunae/premailer/master/lib/premailer/html_to_plain_text.rb
-#
-
-require 'htmlentities'
+require 'nokogiri'
 
 module ActionMailer
   module Text
@@ -15,95 +10,70 @@ module ActionMailer
         HtmlToPlainText.convert_to_text(html, line_length, from_charset)
       end
 
-      # Returns the text in UTF-8 format with all HTML tags removed
-      #
-      # TODO: add support for DL, OL
+      # Returns UTF-8 text, preserving the converter's paragraph, link, and heading formatting.
       def self.convert_to_text(html, line_length = 65, _from_charset = 'UTF-8')
-        txt = html.to_str
-
-        # decode HTML entities
-        he = HTMLEntities.new
-        txt = he.decode(txt)
-
-        # Ignore things that come outside the body
-        txt.gsub!(%r{.*?(<body.+?/body>).*?}im, '\1')
-
-        # replace image by their alt attribute
-        txt.gsub!(%r{<img.+?alt="([^"]*)"[^>]*/>}i, '\1')
-        txt.gsub!(%r{<img.+?alt='([^']*)'[^>]*/>}i, '\1')
-
-        # links
-        txt.gsub!(%r{<a.+?href="([^"]*)"[^>]*>(.*?)</a>}mi) do |_s|
-          matches = Regexp.last_match.to_a.map(&:strip)
-          "#{matches[2]} ( #{matches[1]} )" unless matches[2].empty?
-        end
-
-        txt.gsub!(%r{<a.+?href='([^']*)'[^>]*>(.*?)</a>}mi) do |_s|
-          matches = Regexp.last_match.to_a.map(&:strip)
-          "#{matches[2]} ( #{matches[1]} )" unless matches[2].empty?
-        end
-
-        # handle headings (H1-H6)
-        txt.gsub!(%r{(</h[1-6]>)}i, "\n\\1") # move closing tags to new lines
-        txt.gsub!(%r{\s*<h([1-6]+)[^>]*>\s*(.*)\s*</h[1-6]+>}i) do |_s|
-          hlevel = Regexp.last_match[1].to_i
-
-          htext = Regexp.last_match[2]
-          htext.gsub!(%r{<br\s*/?>}i, "\n") # handle <br>s
-          htext.gsub!(%r{</?[^>]*>}i, '') # strip tags
-
-          # determine maximum line length
-          hlength = 0
-          htext.each_line do |l|
-            llength = l.strip.length
-            hlength = llength if llength > hlength
-          end
-          hlength = line_length if line_length && hlength > line_length
-
-          htext = case hlevel
-                  when 1   # H1, asterisks above and below
-                    "#{'*' * hlength}\n#{htext}\n#{'*' * hlength}"
-                  when 2   # H1, dashes above and below
-                    "#{'-' * hlength}\n#{htext}\n#{'-' * hlength}"
-                  else # H3-H6, dashes below
-                    "#{htext}\n#{'-' * hlength}"
-                  end
-
-          "\n\n#{htext}\n\n"
-        end
-
-        # wrap spans
-        txt.gsub!(%r{(</span>)\s+(<span)}mi, '\1 \2')
-
-        # lists -- TODO: should handle ordered lists
-        txt.gsub!(/\s*(<li[^>]*>)\s*/i, '* ')
-        # list not followed by a newline
-        txt.gsub!(%r{</li>\s*(?!\n)}i, "\n")
-
-        # paragraphs and line breaks
-        txt.gsub!(%r{</p>}i, "\n\n")
-        txt.gsub!(%r{<br[/ ]*>}i, "\n")
-
-        # strip remaining tags
-        txt.gsub!(%r{</?[^>]*>}, '')
-
+        document = Nokogiri::HTML.parse(html.to_str, nil, 'UTF-8')
+        txt = render_children(document.at_css('body') || document, line_length)
         txt = custom_word_wrap(txt, line_length) if line_length
-
-        # remove linefeeds (\r\n and \r -> \n)
         txt.gsub!(/\r\n?/, "\n")
-
-        # strip extra spaces
-        txt.gsub!(/\302\240+/, ' ') # non-breaking spaces -> spaces
-        txt.gsub!(/\n[ \t]+/, "\n") # space at start of lines
-        txt.gsub!(/[ \t]+\n/, "\n") # space at end of lines
-
-        # no more than two consecutive newlines
+        txt.tr!("\u00a0", ' ')
+        txt.gsub!(/\n[ \t]+/, "\n")
+        txt.gsub!(/[ \t]+\n/, "\n")
         txt.gsub!(/\n{3,}/, "\n\n")
-
-        # no more than two consecutive spaces
         txt.gsub!(/ {2,}/, ' ')
-
         txt.strip
+      end
+
+      def self.render_children(node, line_length)
+        node.children.each_with_object(''.dup) do |child, text|
+          if child.element? && child.name == 'li'
+            text.rstrip!
+            text << "\n" unless text.empty?
+          end
+          text << render_node(child, line_length)
+        end
+      end
+
+      def self.render_node(node, line_length)
+        return render_text(node) if node.text?
+        return '' unless node.element?
+        return '' if %w[script style].include?(node.name)
+        return node['alt'].to_s if node.name == 'img'
+        return "\n" if node.name == 'br'
+
+        text = render_children(node, line_length)
+        case node.name
+        when 'a'
+          node['href'] && !text.strip.empty? ? "#{text.strip} ( #{node['href'].strip} )" : text
+        when 'h1', 'h2', 'h3', 'h4', 'h5', 'h6'
+          render_heading(text, node.name, line_length)
+        when 'li'
+          "* #{text.lstrip}\n"
+        when 'ul', 'ol'
+          "\n#{text.strip}\n"
+        when 'p'
+          "#{text}\n\n"
+        else
+          text
+        end
+      end
+
+      def self.render_text(node)
+        previous = node.previous_sibling
+        following = node.next_sibling
+        return ' ' if node.content.strip.empty? && !previous.nil? && !following.nil? &&
+                      previous.name == 'span' && following.name == 'span'
+
+        node.content
+      end
+
+      def self.render_heading(text, tag, line_length)
+        text = text.strip
+        length = text.lines.map { |line| line.strip.length }.max || 0
+        length = [length, line_length].min if line_length
+        rule = (tag == 'h1' ? '*' : '-') * length
+        heading = %w[h1 h2].include?(tag) ? "#{rule}\n#{text}\n#{rule}" : "#{text}\n#{rule}"
+        "\n\n#{heading}\n\n"
       end
 
       # Taken from Rails' word_wrap helper (http://api.rubyonrails.org/classes/ActionView/Helpers/TextHelper.html#method-i-word_wrap)

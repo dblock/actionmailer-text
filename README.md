@@ -36,6 +36,10 @@ end
 
 The MIME standard allows systems to send e-mail with multiple parts: plain/text for business-efficient devices such as the Blackberry, and text/html for web-based e-mail readers, such as GMail. Furthermore, ActionMailer supports multiple template formats: create an .html.haml template along with a .txt.haml template to generate both. We also know that text/plain email helps deliverability, but we believe a disproportionately small amount of text e-mails are actually read - the vast majority of devices are capable of parsing some HTML. This gem lets you get the text/plain part for free.
 
+HTML is parsed with Nokogiri. Generated text preserves repeated content, includes image alt text and link destinations, and formats headings, lists, paragraphs, and line breaks. Existing explicit text parts are left unchanged.
+
+Escaped markup remains literal text, image alt text does not require a self-closing tag, comments and script/style content are omitted, and malformed HTML is repaired before conversion. Fragment text surrounding paragraphs may gain paragraph breaks as Nokogiri normalizes the document. Nested list items appear on separate lines; ordered lists use `*` bullets, and nesting is flattened rather than indented.
+
 See [this blog post](http://artsy.github.io/blog/2012/05/16/generating-automatic-plain-text-mime-parts-with-rails-actionmailer) for details.
 
 ## Contributing

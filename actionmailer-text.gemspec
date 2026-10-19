@@ -17,6 +17,6 @@ Gem::Specification.new do |s|
   s.licenses = ['MIT']
   s.summary = 'Automatically insert a text/plain part into your HTML multipart e-mails.'
   s.add_dependency 'actionmailer'
-  s.add_dependency 'htmlentities'
+  s.add_dependency 'nokogiri', '>= 1.6'
   s.metadata['rubygems_mfa_required'] = 'true'
 end
