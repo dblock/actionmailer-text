@@ -44,6 +44,10 @@ RAILS_VERSION='~> 7.2.0' bundle exec rspec
 
 GitHub Actions runs the suite against Rails 6.1, 7.0, 7.1, 7.2, 8.0, and 8.1 with compatible Ruby versions, including Ruby 4.0 for Rails 8.1. Use a Ruby version supported by the selected Rails release. Lint runs separately with current RuboCop; `bundle exec rake` runs both lint and specs locally.
 
+## Coverage
+
+RSpec collects line and branch coverage with SimpleCov, including library files that were not loaded. Open `coverage/index.html` for the local report; `coverage/lcov.info` is generated for external reporting. The Coverage workflow uploads the reports as an artifact and submits LCOV to [Coveralls](https://coveralls.io/github/dblock/actionmailer-text). A maintainer must enable the repository in Coveralls for hosted reports to appear.
+
 ## Releasing
 
 Maintainers should follow [RELEASING.md](RELEASING.md) to prepare, publish, and verify a release, then start the next development version.
