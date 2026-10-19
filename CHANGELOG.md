@@ -1,5 +1,6 @@
 ### 0.2.1 (Next)
 
+* [#21](https://github.com/dblock/actionmailer-text/pull/21): Add Danger pull-request checks with danger-changelog - [@dblock](https://github.com/dblock).
 * Your contribution here.
 
 ### 0.2.0 (2026-10-19)
