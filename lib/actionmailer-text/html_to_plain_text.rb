@@ -76,11 +76,28 @@ module ActionMailer
         "\n\n#{heading}\n\n"
       end
 
-      # Taken from Rails' word_wrap helper (http://api.rubyonrails.org/classes/ActionView/Helpers/TextHelper.html#method-i-word_wrap)
       def self.custom_word_wrap(txt, line_length)
-        txt.split("\n").collect do |line|
-          line.length > line_length ? line.gsub(/(.{1,#{line_length}})(\s+|$)/, "\\1\n").strip : line
-        end * "\n"
+        txt.split("\n").map { |line| wrap_long_line(line, line_length) }.join("\n")
+      end
+
+      def self.wrap_long_line(line, line_length)
+        return line if line.length <= line_length
+
+        wrapped = []
+        while line.length > line_length
+          index = line[0, line_length + 1].rindex(/\s/)
+          index = line.index(/\s/, line_length) if index.nil? || index.zero?
+          unless index
+            wrapped << line
+            line = ''
+            break
+          end
+
+          wrapped << line[0, index]
+          line = line[index, line.length - index].lstrip
+        end
+        wrapped << line unless line.empty?
+        wrapped.join("\n").strip
       end
     end
   end
