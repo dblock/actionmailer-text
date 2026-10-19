@@ -108,6 +108,48 @@ describe ActionMailer::Text::HtmlToPlainText do
     expect(subject.convert_to_text("<p class=\"123'45 , att\" att=tester>test <span class='te\"st'>text</span>\n")).to eq('test text')
   end
 
+  it 'parses quoted angle brackets and unquoted link attributes' do
+    expect(subject.convert_to_text('<a title="1 > 0" href=https://example.com>Link</a>'))
+      .to eq('Link ( https://example.com )')
+  end
+
+  it 'keeps escaped markup as text instead of interpreting it as tags' do
+    expect(subject.convert_to_text('<p>&lt;strong&gt;Text&lt;/strong&gt; &amp; more</p>'))
+      .to eq('<strong>Text</strong> & more')
+  end
+
+  it 'preserves repeated content and image alt text' do
+    expect(subject.convert_to_text('<p>Again</p><p>Again</p><img alt="A &amp; B">'))
+      .to eq("Again\n\nAgain\n\nA & B")
+  end
+
+  it 'does not turn comments into visible content' do
+    expect(subject.convert_to_text('<p>Before<!-- hidden > text --> after</p>')).to eq('Before after')
+  end
+
+  it 'normalizes fragments and recovers unclosed paragraphs' do
+    expect(subject.convert_to_text('Before<p>Paragraph</p>After', nil))
+      .to eq("Before\n\nParagraph\n\nAfter")
+    expect(subject.convert_to_text('<p>First<p>Second', nil)).to eq("First\n\nSecond")
+    expect(subject.convert_to_text('Before <strong>bold</strong> after', nil)).to eq('Before bold after')
+  end
+
+  it 'separates nested list items without losing surrounding text' do
+    html = '<p>Before</p><ul><li>Outer<ul><li>Inner</li></ul>Tail</li><li>Next</li></ul><p>After</p>'
+
+    expect(subject.convert_to_text(html, nil)).to eq("Before\n\n* Outer\n* Inner\nTail\n* Next\nAfter")
+    expect(subject.convert_to_text('<ol><li>First<ol><li>Nested</li></ol></li><li>Last</li></ol>', nil))
+      .to eq("* First\n* Nested\n* Last")
+  end
+
+  it 'omits scripts and styles in both documents and fragments' do
+    hidden = '<script>var secret = "<p>hidden</p>";</script><style>.hidden { color: red; }</style>'
+
+    expect(subject.convert_to_text("#{hidden}<p>Visible</p>", nil)).to eq('Visible')
+    expect(subject.convert_to_text("<html><head>#{hidden}</head><body>Before#{hidden} after</body></html>", nil))
+      .to eq('Before after')
+  end
+
   it 'creates line breaks for p and br tags' do
     expect(subject.convert_to_text('<p>Test text</p><p>Test text</p>')).to eq("Test text\n\nTest text")
     expect(subject.convert_to_text("\n<p>Test text</p>\n\n\n\t<p>Test text</p>\n")).to eq("Test text\n\nTest text")
