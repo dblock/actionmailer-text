@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 module ActionMailer
+  # Adds a generated plaintext alternative to HTML mail unless an explicit text part exists.
   module Text
     def self.included(klass)
       klass.class_eval do

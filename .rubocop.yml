@@ -6,3 +6,9 @@ AllCops:
   Exclude:
     - vendor/**/*
     - bin/**/*
+
+Metrics:
+  Enabled: false
+
+Layout/LineLength:
+  Enabled: false
