@@ -48,6 +48,8 @@ GitHub Actions runs the suite against Rails 6.1, 7.0, 7.1, 7.2, 8.0, and 8.1 wit
 
 RSpec collects line and branch coverage with SimpleCov, including library files that were not loaded. Open `coverage/index.html` for the local report; `coverage/lcov.info` is generated for external reporting. The Coverage workflow uploads the reports as an artifact and submits LCOV to [Coveralls](https://coveralls.io/github/dblock/actionmailer-text). A maintainer must enable the repository in Coveralls for hosted reports to appear.
 
+Coverage configuration lives in `.simplecov`. The entry-point regression runs in a fresh Ruby process and merges its coverage with RSpec, so the version file loaded early by Bundler is measured as well.
+
 ## Releasing
 
 Maintainers should follow [RELEASING.md](RELEASING.md) to prepare, publish, and verify a release, then start the next development version.

@@ -29,6 +29,12 @@ describe ActionMailer::Text do
   it 'inserts html part last' do
     expect(subject.parts.last.content_type).to eq 'text/html; charset=UTF-8'
   end
+  it 'adds text to a custom parts order that omits it' do
+    mailer.default parts_order: ['text/html']
+
+    expect(subject.parts.map(&:mime_type)).to eq(['text/plain', 'text/html'])
+    expect(subject.text_part.body.decoded).to include('Hi username,')
+  end
   it 'matches the multipart snapshot' do
     expect(subject).to match_email_example_in 'welcome_email.multipart'
   end

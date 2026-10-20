@@ -159,6 +159,7 @@ describe ActionMailer::Text::HtmlToPlainText do
   end
 
   it 'converts headings' do
+    expect(subject.convert_to_text('<h1>Unwrapped</h1>', nil)).to eq("*********\nUnwrapped\n*********")
     expect(subject.convert_to_text('<h1>Test</h1>')).to eq("****\nTest\n****")
     expect(subject.convert_to_text("\t<h1>\nTest</h1> ")).to eq("****\nTest\n****")
     expect(subject.convert_to_text("\t<h1>\nTest line 1<br>Test 2</h1> ")).to eq("***********\nTest line 1\nTest 2\n***********")
